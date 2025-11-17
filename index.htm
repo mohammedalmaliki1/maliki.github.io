@@ -61,7 +61,7 @@ display:none; backdrop-filter: blur(10px); margin:50px 0 50px 0; transition: all
 
 .bar-container { display:flex; justify-content:center; gap:25px; margin-top:20px; align-items:flex-end; min-height:200px; }
 .bar-group { display:flex; flex-direction:column; align-items:center; gap:5px; }
-.bar { width:25px; border-radius:10px 10px 0 0; transition: height 0.5s; }
+.bar { width:25px; border-radius:10px 10px 0 0; transition: height 0.8s ease-out; }
 .bar-price { background:#f2c94c; }
 .bar-hp { background:#00aaff; }
 .bar-year { background:#a64ca6; }
@@ -200,24 +200,32 @@ function updateComparison(){
         comparisonTable.innerHTML += row;
     });
 
+    // ===== Bar diagram med animation =====
     barContainer.innerHTML="";
     selectedCars.forEach(carName=>{
         const car = cars.find(c=>c.name===carName);
         const group = document.createElement('div'); group.classList.add('bar-group');
 
-        const barPrice = document.createElement('div'); barPrice.classList.add('bar','bar-price');
-        barPrice.style.height = (car.price/15000)+"px"; barPrice.title = `${car.name} Pris: ${car.price.toLocaleString()} kr`;
+        const barPrice = document.createElement('div'); barPrice.classList.add('bar','bar-price'); barPrice.style.height="0px";
+        barPrice.title = `${car.name} Pris: ${car.price.toLocaleString()} kr`;
 
-        const barHp = document.createElement('div'); barHp.classList.add('bar','bar-hp');
-        barHp.style.height = (car.hp*0.8)+"px"; barHp.title = `${car.name} Hästkrafter: ${car.hp} hk`;
+        const barHp = document.createElement('div'); barHp.classList.add('bar','bar-hp'); barHp.style.height="0px";
+        barHp.title = `${car.name} Hästkrafter: ${car.hp} hk`;
 
-        const barYear = document.createElement('div'); barYear.classList.add('bar','bar-year');
-        barYear.style.height = (car.year-1990)*5+"px"; barYear.title = `${car.name} Årsmodell: ${car.year}`; 
+        const barYear = document.createElement('div'); barYear.classList.add('bar','bar-year'); barYear.style.height="0px";
+        barYear.title = `${car.name} Årsmodell: ${car.year}`;
 
         const label = document.createElement('div'); label.classList.add('bar-label'); label.innerText = car.name;
 
         group.appendChild(barPrice); group.appendChild(barHp); group.appendChild(barYear); group.appendChild(label);
         barContainer.appendChild(group);
+
+        // Animation med timeout så staplarna “växer”
+        setTimeout(()=>{ 
+            barPrice.style.height = (car.price/15000)+"px";
+            barHp.style.height = (car.hp*0.8)+"px";
+            barYear.style.height = (car.year-1990)*5+"px";
+        },50);
     });
 }
 
@@ -226,6 +234,7 @@ function toggleMode(){ document.body.classList.toggle('light-mode'); }
 </script>
 </body>
 </html>
+
 
 
 
