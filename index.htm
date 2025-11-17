@@ -1,98 +1,104 @@
 <!DOCTYPE html>
 <html lang="sv">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Biljämförelse</title>
-    <style>
-        /* ===== Reset & grundläggande stil ===== */
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
-        body { background-color: #f0f2f5; color: #333; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Premium Biljämförelse</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* ===== Grundinställningar ===== */
+* { margin:0; padding:0; box-sizing:border-box; font-family: 'Montserrat', sans-serif; }
+body { background:#0d0d0d; color:#f2f2f2; transition: background 0.5s, color 0.5s; }
+.light-mode { background:#f4f4f9; color:#0d0d0d; }
 
-        /* ===== Header ===== */
-        header {
-            background: linear-gradient(90deg, #4b79a1, #283e51);
-            color: white;
-            padding: 20px 40px;
-            text-align: center;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-        }
-        header h1 { font-size: 2.5rem; animation: fadeIn 1.5s ease-in-out; }
-        nav { margin-top: 10px; }
-        nav a {
-            color: white; margin: 0 15px; text-decoration: none; font-weight: bold; transition: transform 0.3s;
-        }
-        nav a:hover { transform: scale(1.1); }
+/* ===== Header ===== */
+header {
+    background: linear-gradient(90deg, #000000, #1a1a1a);
+    color:#f2c94c; text-align:center; padding:40px 20px; box-shadow:0 4px 15px rgba(0,0,0,0.7);
+    position: sticky; top:0; z-index:1000; transition: background 0.5s, color 0.5s;
+}
+.light-mode header { background: linear-gradient(90deg, #ffffff, #e0e0e0); color:#0d0d0d; }
+header h1 { font-size:3rem; letter-spacing:2px; animation: fadeIn 1.5s ease-in-out; }
 
-        /* ===== Filter & sortering ===== */
-        .controls {
-            display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; margin: 20px;
-        }
-        .controls select, .controls input {
-            padding: 10px; border-radius: 5px; border: 1px solid #ccc; min-width: 150px;
-        }
+nav { margin-top:15px; }
+nav a { color:#f2c94c; margin:0 20px; text-decoration:none; font-weight:700; transition: transform 0.3s; }
+nav a:hover { transform: scale(1.1); }
+.light-mode nav a { color:#0d0d0d; }
 
-        /* ===== Bilkort ===== */
-        .car-list {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            padding: 20px 40px;
-        }
-        .car-card {
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-            padding: 20px;
-            transition: transform 0.3s, box-shadow 0.3s;
-            position: relative;
-        }
-        .car-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
-        .car-card img { width: 100%; border-radius: 10px; margin-bottom: 15px; }
-        .car-card h3 { margin-bottom: 10px; }
-        .car-card p { margin: 5px 0; }
-        .car-card a, .compare-btn {
-            display: inline-block; margin-top: 10px; padding: 8px 12px;
-            border: none; border-radius: 5px; text-decoration: none; color: white; cursor: pointer;
-            background: #4b79a1; transition: background 0.3s, transform 0.3s;
-        }
-        .car-card a:hover, .compare-btn:hover { background: #283e51; transform: scale(1.05); }
+/* ===== Dark/Light Toggle ===== */
+.toggle-btn { position:absolute; top:50%; right:20px; transform:translateY(-50%);
+    padding:10px 20px; background:#f2c94c; color:#0d0d0d; border:none; border-radius:20px; cursor:pointer; font-weight:bold;
+}
+.toggle-btn:hover { background:#e6b800; transform:scale(1.05); }
 
-        /* ===== Jämförelsepanel ===== */
-        .comparison-panel {
-            background: #fff; border-top: 3px solid #4b79a1; padding: 20px 40px;
-            display: none; animation: slideIn 0.5s forwards; margin: 20px 0;
-        }
-        .comparison-panel table {
-            width: 100%; border-collapse: collapse; margin-bottom: 15px;
-        }
-        .comparison-panel th, .comparison-panel td {
-            border: 1px solid #ddd; padding: 10px; text-align: center;
-        }
-        .comparison-panel th { background-color: #4b79a1; color: white; }
+/* ===== Filter/ Sök ===== */
+.controls { display:flex; flex-wrap:wrap; justify-content:center; gap:15px; margin:30px 0; }
+.controls input, .controls select { padding:12px 15px; border-radius:10px; border:none; outline:none; font-size:1rem; }
 
-        /* ===== Animationer ===== */
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes slideIn { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+/* ===== Bilkort Flip-Card ===== */
+.car-list { display:grid; grid-template-columns:repeat(auto-fit, minmax(300px,1fr)); gap:25px; padding:0 50px 50px 50px; }
+.flip-card { background:transparent; perspective:1000px; }
+.flip-card-inner { position:relative; width:100%; transition: transform 0.8s; transform-style: preserve-3d; }
+.flip-card:hover .flip-card-inner { transform: rotateY(180deg); }
+.flip-card-front, .flip-card-back {
+    position:absolute; width:100%; backface-visibility:hidden; border-radius:25px;
+    padding:20px; box-shadow:0 8px 25px rgba(0,0,0,0.6);
+}
+.flip-card-front {
+    background: rgba(255,255,255,0.05); backdrop-filter:blur(10px);
+}
+.light-mode .flip-card-front { background: rgba(255,255,255,0.8); color:#0d0d0d; }
+.flip-card-back {
+    background: rgba(242,201,76,0.1); color:#0d0d0d; transform: rotateY(180deg);
+}
+.light-mode .flip-card-back { background: rgba(242,201,76,0.2); color:#0d0d0d; }
+.flip-card img { width:100%; border-radius:20px; margin-bottom:15px; }
+.flip-card h3 { font-size:1.5rem; margin-bottom:10px; }
+.flip-card p { margin:5px 0; }
 
-        /* ===== Footer ===== */
-        footer { background-color: #283e51; color: white; text-align: center; padding: 15px; margin-top: 40px; }
+/* ===== Buttons ===== */
+.compare-btn, .car-card a {
+    display:inline-block; margin-top:10px; padding:12px 18px;
+    border:none; border-radius:15px; text-decoration:none; color:#0d0d0d; font-weight:bold; background:#f2c94c;
+    transition: all 0.3s ease;
+}
+.compare-btn:hover, .car-card a:hover { background:#e6b800; transform:scale(1.05); }
 
-    </style>
+/* ===== Jämförelsepanel ===== */
+.comparison-panel {
+    background: rgba(255,255,255,0.05); border-top:3px solid #f2c94c; padding:25px 50px;
+    display:none; backdrop-filter: blur(10px); margin:30px 0; transition: all 0.5s;
+}
+.light-mode .comparison-panel { background: rgba(0,0,0,0.05); }
+.comparison-panel table { width:100%; border-collapse:collapse; margin-bottom:15px; }
+.comparison-panel th, .comparison-panel td { border:1px solid rgba(255,255,255,0.3); padding:12px; text-align:center; }
+.comparison-panel th { background:#f2c94c; color:#0d0d0d; }
+
+/* ===== Bar Diagram ===== */
+.bar-container { display:flex; justify-content:center; gap:15px; margin-top:20px; }
+.bar { width:50px; background:#f2c94c; margin-top:auto; transition:height 0.5s; }
+.light-mode .bar { background:#e6b800; }
+
+/* ===== Footer ===== */
+footer { background:#1a1a1a; color:#f2c94c; text-align:center; padding:20px; margin-top:40px; }
+.light-mode footer { background:#e0e0e0; color:#0d0d0d; }
+
+/* ===== Animationer ===== */
+@keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+
+</style>
 </head>
 <body>
 
 <header>
-    <h1>Biljämförelse</h1>
+    <h1>Premium Biljämförelse</h1>
     <nav>
         <a href="#">Hem</a>
         <a href="#">Bilar</a>
         <a href="#">Om</a>
         <a href="#">Kontakt</a>
     </nav>
+    <button class="toggle-btn" onclick="toggleMode()">Dark/Light</button>
 </header>
 
 <section class="controls">
@@ -113,133 +119,127 @@
 </section>
 
 <section class="car-list" id="carList">
-    <!-- Bilkort genereras här via JS -->
+    <!-- Dynamiska flip-card bilkort genereras här -->
 </section>
 
 <div class="comparison-panel" id="comparisonPanel">
     <h2>Jämför Bilar</h2>
     <table id="comparisonTable"><tr><th>Specifikation</th></tr></table>
+    <div class="bar-container" id="barContainer"></div>
     <button class="compare-btn" onclick="clearComparison()">Rensa jämförelse</button>
 </div>
 
 <footer>
-    &copy; 2025 Biljämförelse – Alla rättigheter reserverade
+    &copy; 2025 Premium Biljämförelse – Alla rättigheter reserverade
 </footer>
 
 <script>
-    // ===== Bildata =====
-    const cars = [
-        {
-            name: "Volvo XC60",
-            price: "450 000 kr",
-            fuel: "Diesel",
-            year: "2020",
-            hp: "250 hk",
-            seats: "5",
-            description: "En säker och bekväm familjebil.",
-            img: "https://via.placeholder.com/300x150?text=Volvo+XC60",
-            link: "https://www.volvocars.com/se/cars/xc60"
-        },
-        {
-            name: "BMW X5",
-            price: "600 000 kr",
-            fuel: "Bensin",
-            year: "2021",
-            hp: "300 hk",
-            seats: "5",
-            description: "Sportig SUV med hög prestanda.",
-            img: "https://via.placeholder.com/300x150?text=BMW+X5",
-            link: "https://www.bmw.se/sv/all-models/x-series/x5/2021/bmw-x5-inspire.html"
-        },
-        {
-            name: "Audi Q7",
-            price: "700 000 kr",
-            fuel: "Diesel",
-            year: "2022",
-            hp: "340 hk",
-            seats: "7",
-            description: "Lyxig SUV för stora familjer.",
-            img: "https://via.placeholder.com/300x150?text=Audi+Q7",
-            link: "https://www.audi.se/sv/web/sv/models/q7/q7.html"
-        }
-    ];
+// ===== Bildata =====
+const cars = [
+    { name:"Volvo XC60", price:450000, fuel:"Diesel", year:2020, hp:250, seats:5, description:"En säker och bekväm familjebil.", img:"https://via.placeholder.com/400x200?text=Volvo+XC60", link:"https://www.volvocars.com/se/cars/xc60" },
+    { name:"BMW X5", price:600000, fuel:"Bensin", year:2021, hp:300, seats:5, description:"Sportig SUV med hög prestanda.", img:"https://via.placeholder.com/400x200?text=BMW+X5", link:"https://www.bmw.se/sv/all-models/x-series/x5/2021/bmw-x5-inspire.html" },
+    { name:"Audi Q7", price:700000, fuel:"Diesel", year:2022, hp:340, seats:7, description:"Lyxig SUV för stora familjer.", img:"https://via.placeholder.com/400x200?text=Audi+Q7", link:"https://www.audi.se/sv/web/sv/models/q7/q7.html" }
+];
 
-    const carList = document.getElementById('carList');
-    const comparisonPanel = document.getElementById('comparisonPanel');
-    const comparisonTable = document.getElementById('comparisonTable');
-    let selectedCars = [];
+const carList = document.getElementById('carList');
+const comparisonPanel = document.getElementById('comparisonPanel');
+const comparisonTable = document.getElementById('comparisonTable');
+const barContainer = document.getElementById('barContainer');
+let selectedCars = [];
 
-    // ===== Generera bilkort =====
-    function renderCars(list) {
-        carList.innerHTML = "";
-        list.forEach(car => {
-            const card = document.createElement('div');
-            card.classList.add('car-card');
-            card.innerHTML = `
+// ===== Rendera bilkort med flip-card =====
+function renderCars(list){
+    carList.innerHTML="";
+    list.forEach(car=>{
+        const flipCard = document.createElement('div');
+        flipCard.classList.add('flip-card');
+        flipCard.innerHTML = `
+        <div class="flip-card-inner">
+            <div class="flip-card-front">
                 <img src="${car.img}" alt="${car.name}">
                 <h3>${car.name}</h3>
-                <p>Pris: ${car.price}</p>
+                <p>Pris: ${car.price.toLocaleString()} kr</p>
                 <p>Bränsle: ${car.fuel}</p>
                 <p>Årsmodell: ${car.year}</p>
-                <p>Hästkrafter: ${car.hp}</p>
-                <p>Säten: ${car.seats}</p>
-                <p>${car.description}</p>
                 <button class="compare-btn" onclick="addToCompare('${car.name}')">Jämför</button>
                 <a href="${car.link}" target="_blank">Besök hemsida</a>
-            `;
-            carList.appendChild(card);
+            </div>
+            <div class="flip-card-back">
+                <h3>Detaljer</h3>
+                <p>${car.description}</p>
+                <p>Hästkrafter: ${car.hp} hk</p>
+                <p>Säten: ${car.seats}</p>
+            </div>
+        </div>`;
+        carList.appendChild(flipCard);
+    });
+}
+renderCars(cars);
+
+// ===== Filterfunktion =====
+function filterCars(){
+    const searchValue = document.getElementById('searchInput').value.toLowerCase();
+    const fuelValue = document.getElementById('fuelFilter').value;
+    const seatValue = document.getElementById('seatFilter').value;
+    const filtered = cars.filter(car=>{
+        const matchesSearch = car.name.toLowerCase().includes(searchValue);
+        const matchesFuel = fuelValue ? car.fuel===fuelValue:true;
+        const matchesSeats = seatValue ? car.seats==seatValue:true;
+        return matchesSearch && matchesFuel && matchesSeats;
+    });
+    renderCars(filtered);
+}
+
+// ===== Jämförelsefunktion =====
+function addToCompare(carName){
+    if(selectedCars.includes(carName)){ alert(carName+" är redan tillagd!"); return; }
+    selectedCars.push(carName);
+    comparisonPanel.style.display="block";
+    updateComparisonTable();
+}
+
+// ===== Uppdatera jämförelsetabell och diagram =====
+function updateComparisonTable(){
+    const specs = [
+        {label:"Pris", key:"price"},
+        {label:"Bränsle", key:"fuel"},
+        {label:"Årsmodell", key:"year"},
+        {label:"Hästkrafter", key:"hp"},
+        {label:"Säten", key:"seats"}
+    ];
+    comparisonTable.innerHTML="<tr><th>Specifikation</th>"+selectedCars.map(c=>`<th>${c}</th>`).join("")+"</tr>";
+    specs.forEach(spec=>{
+        let row = `<tr><td>${spec.label}</td>`;
+        selectedCars.forEach(carName=>{
+            const car = cars.find(c=>c.name===carName);
+            let value = car[spec.key];
+            if(spec.key==="price") value = value.toLocaleString()+" kr";
+            if(spec.key==="hp") value = value+" hk";
+            row += `<td>${value}</td>`;
         });
-    }
+        row += "</tr>";
+        comparisonTable.innerHTML += row;
+    });
 
-    renderCars(cars);
+    // ===== Bar diagram =====
+    barContainer.innerHTML="";
+    selectedCars.forEach(carName=>{
+        const car = cars.find(c=>c.name===carName);
+        const bar = document.createElement('div');
+        bar.classList.add('bar');
+        bar.style.height=(car.hp/5)+"px"; // skala för graf
+        bar.title=`${car.name}: ${car.hp} hk`;
+        barContainer.appendChild(bar);
+    });
+}
 
-    // ===== Filterfunktion =====
-    function filterCars() {
-        const searchValue = document.getElementById('searchInput').value.toLowerCase();
-        const fuelValue = document.getElementById('fuelFilter').value;
-        const seatValue = document.getElementById('seatFilter').value;
+// ===== Rensa jämförelse =====
+function clearComparison(){ selectedCars=[]; comparisonPanel.style.display="none"; barContainer.innerHTML=""; }
 
-        const filtered = cars.filter(car => {
-            const matchesSearch = car.name.toLowerCase().includes(searchValue);
-            const matchesFuel = fuelValue ? car.fuel === fuelValue : true;
-            const matchesSeats = seatValue ? car.seats === seatValue : true;
-            return matchesSearch && matchesFuel && matchesSeats;
-        });
-        renderCars(filtered);
-    }
-
-    // ===== Jämförelsefunktion =====
-    function addToCompare(carName) {
-        if(selectedCars.includes(carName)) {
-            alert(carName + " är redan tillagd!");
-            return;
-        }
-        selectedCars.push(carName);
-        comparisonPanel.style.display = 'block';
-        updateComparisonTable();
-    }
-
-    function updateComparisonTable() {
-        // Reset table
-        comparisonTable.innerHTML = "<tr><th>Specifikation</th>" + selectedCars.map(c => `<th>${c}</th>`).join('') + "</tr>";
-        const specs = ["Pris", "Bränsle", "Årsmodell", "Hästkrafter", "Säten"];
-        specs.forEach(spec => {
-            let row = `<tr><td>${spec}</td>`;
-            selectedCars.forEach(carName => {
-                const car = cars.find(c => c.name === carName);
-                row += `<td>${car[spec.toLowerCase()] || car[spec]}</td>`;
-            });
-            row += "</tr>";
-            comparisonTable.innerHTML += row;
-        });
-    }
-
-    function clearComparison() {
-        selectedCars = [];
-        comparisonPanel.style.display = 'none';
-    }
+// ===== Dark/Light mode =====
+function toggleMode(){ document.body.classList.toggle('light-mode'); }
 
 </script>
-
 </body>
 </html>
+
