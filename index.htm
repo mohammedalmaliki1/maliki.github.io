@@ -1,7 +1,254 @@
 <!DOCTYPE html>
-<html>
-    <h1>hello world</h1>
-    <h2>hello world</h2>
-    <h3>hello world, maliki här</h3>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biljämförelse</title>
+    <style>
+        /* ===== Reset & grundläggande stil ===== */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
+        body { background-color: #f4f4f9; color: #333; }
 
+        /* ===== Header ===== */
+        header {
+            background: linear-gradient(90deg, #4b79a1, #283e51);
+            color: white;
+            padding: 20px 40px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            animation: fadeIn 2s ease-in-out;
+        }
+
+        nav {
+            margin-top: 10px;
+        }
+
+        nav a {
+            color: white;
+            margin: 0 15px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: transform 0.3s;
+        }
+
+        nav a:hover {
+            transform: scale(1.1);
+        }
+
+        /* ===== Bilkarta ===== */
+        .car-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            padding: 40px;
+        }
+
+        .car-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            padding: 20px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .car-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+
+        .car-card img {
+            width: 100%;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+
+        .car-card h3 {
+            margin-bottom: 10px;
+        }
+
+        .car-card p {
+            margin: 5px 0;
+        }
+
+        /* ===== Jämförelse knapp ===== */
+        .compare-btn {
+            margin-top: 10px;
+            padding: 10px 15px;
+            border: none;
+            background-color: #4b79a1;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .compare-btn:hover {
+            background-color: #283e51;
+        }
+
+        /* ===== Jämförelse panel ===== */
+        .comparison-panel {
+            background: #fff;
+            border-top: 2px solid #4b79a1;
+            padding: 20px 40px;
+            margin: 20px 0;
+            display: none;
+            animation: slideIn 0.5s forwards;
+        }
+
+        .comparison-panel h2 {
+            margin-bottom: 15px;
+        }
+
+        .comparison-panel table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .comparison-panel th, .comparison-panel td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .comparison-panel th {
+            background-color: #4b79a1;
+            color: white;
+        }
+
+        /* ===== Animationer ===== */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        /* ===== Footer ===== */
+        footer {
+            background-color: #283e51;
+            color: white;
+            text-align: center;
+            padding: 15px;
+            margin-top: 40px;
+        }
+
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Biljämförelse</h1>
+    <nav>
+        <a href="#">Hem</a>
+        <a href="#">Bilar</a>
+        <a href="#">Om</a>
+        <a href="#">Kontakt</a>
+    </nav>
+</header>
+
+<section class="car-list">
+
+    <div class="car-card">
+        <img src="https://via.placeholder.com/300x150?text=Volvo+XC60" alt="Volvo XC60">
+        <h3>Volvo XC60</h3>
+        <p>Pris: 450 000 kr</p>
+        <p>Bränsle: Diesel</p>
+        <p>Årsmodell: 2020</p>
+        <p>Hästkrafter: 250 hk</p>
+        <p>Säten: 5</p>
+        <button class="compare-btn" onclick="addToCompare(this)">Jämför</button>
+    </div>
+
+    <div class="car-card">
+        <img src="https://via.placeholder.com/300x150?text=BMW+X5" alt="BMW X5">
+        <h3>BMW X5</h3>
+        <p>Pris: 600 000 kr</p>
+        <p>Bränsle: Bensin</p>
+        <p>Årsmodell: 2021</p>
+        <p>Hästkrafter: 300 hk</p>
+        <p>Säten: 5</p>
+        <button class="compare-btn" onclick="addToCompare(this)">Jämför</button>
+    </div>
+
+    <div class="car-card">
+        <img src="https://via.placeholder.com/300x150?text=Audi+Q7" alt="Audi Q7">
+        <h3>Audi Q7</h3>
+        <p>Pris: 700 000 kr</p>
+        <p>Bränsle: Diesel</p>
+        <p>Årsmodell: 2022</p>
+        <p>Hästkrafter: 340 hk</p>
+        <p>Säten: 7</p>
+        <button class="compare-btn" onclick="addToCompare(this)">Jämför</button>
+    </div>
+
+</section>
+
+<div class="comparison-panel" id="comparisonPanel">
+    <h2>Jämför Bilar</h2>
+    <table id="comparisonTable">
+        <tr>
+            <th>Specifikation</th>
+        </tr>
+    </table>
+    <button class="compare-btn" onclick="clearComparison()">Rensa jämförelse</button>
+</div>
+
+<footer>
+    &copy; 2025 Biljämförelse – Alla rättigheter reserverade
+</footer>
+
+<script>
+    const comparisonPanel = document.getElementById('comparisonPanel');
+    const comparisonTable = document.getElementById('comparisonTable');
+    let selectedCars = [];
+
+    function addToCompare(btn) {
+        const card = btn.parentElement;
+        const carName = card.querySelector('h3').innerText;
+        if (selectedCars.includes(carName)) {
+            alert(carName + " är redan tillagd!");
+            return;
+        }
+        selectedCars.push(carName);
+
+        // Visa panel om den var dold
+        comparisonPanel.style.display = 'block';
+
+        // Uppdatera tabellen
+        updateTable();
+    }
+
+    function updateTable() {
+        // Reset table
+        comparisonTable.innerHTML = '<tr><th>Specifikation</th>' + selectedCars.map(c => `<th>${c}</th>`).join('') + '</tr>';
+
+        // Specifikationer
+        const specs = ["Pris", "Bränsle", "Årsmodell", "Hästkrafter", "Säten"];
+        specs.forEach(spec => {
+            let row = `<tr><td>${spec}</td>`;
+            selectedCars.forEach(car => {
+                const card = Array.from(document.querySelectorAll('.car-card')).find(c => c.querySelector('h3').innerText === car);
+                const value = Array.from(card.querySelectorAll('p')).find(p => p.innerText.includes(spec)).innerText.replace(spec + ": ", "");
+                row += `<td>${value}</td>`;
+            });
+            row += `</tr>`;
+            comparisonTable.innerHTML += row;
+        });
+    }
+
+    function clearComparison() {
+        selectedCars = [];
+        comparisonPanel.style.display = 'none';
+    }
+</script>
+
+</body>
 </html>
