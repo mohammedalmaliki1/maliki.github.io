@@ -61,8 +61,7 @@ nav a:hover { transform: scale(1.1); }
 .compare-btn, .car-card a {
     display:inline-block; margin-top:10px; padding:12px 18px;
     border:none; border-radius:15px; text-decoration:none; color:#0d0d0d; font-weight:bold; background:#f2c94c;
-    transition: all 0.3s ease;
-    cursor:pointer;
+    transition: all 0.3s ease; cursor:pointer;
 }
 .compare-btn:hover, .car-card a:hover { background:#e6b800; transform:scale(1.05); }
 
@@ -76,10 +75,15 @@ nav a:hover { transform: scale(1.1); }
 .comparison-panel th, .comparison-panel td { border:1px solid rgba(255,255,255,0.3); padding:12px; text-align:center; }
 .comparison-panel th { background:#f2c94c; color:#0d0d0d; }
 
-/* ===== Bar Diagram ===== */
-.bar-container { display:flex; justify-content:center; gap:15px; margin-top:20px; height:150px; align-items:flex-end; }
-.bar { width:50px; background:#f2c94c; transition:height 0.5s; border-radius:10px 10px 0 0; }
-.light-mode .bar { background:#e6b800; }
+/* ===== Bar Diagram med Pris och Hästkrafter ===== */
+.bar-container { display:flex; justify-content:center; gap:25px; margin-top:20px; align-items:flex-end; min-height:180px; }
+.bar-group { display:flex; flex-direction:column; align-items:center; gap:5px; }
+.bar { width:25px; border-radius:10px 10px 0 0; transition: height 0.5s; }
+.bar-price { background:#f2c94c; }
+.bar-hp { background:#00aaff; }
+.light-mode .bar-price { background:#e6b800; }
+.light-mode .bar-hp { background:#0077cc; }
+.bar-label { font-size:0.9rem; text-align:center; margin-top:5px; }
 
 /* ===== Footer ===== */
 footer { background:#1a1a1a; color:#f2c94c; text-align:center; padding:20px; margin-top:50px; clear:both; }
@@ -119,9 +123,7 @@ footer { background:#1a1a1a; color:#f2c94c; text-align:center; padding:20px; mar
     </select>
 </section>
 
-<section class="car-list" id="carList">
-    <!-- Dynamiska flip-card bilkort genereras här -->
-</section>
+<section class="car-list" id="carList"></section>
 
 <div class="comparison-panel" id="comparisonPanel">
     <h2>Jämför Bilar</h2>
@@ -135,7 +137,7 @@ footer { background:#1a1a1a; color:#f2c94c; text-align:center; padding:20px; mar
 </footer>
 
 <script>
-// ===== Bildata =====
+// ===== Bil-data =====
 const cars = [
     { name:"Volvo XC60", price:450000, fuel:"Diesel", year:2020, hp:250, seats:5, description:"En säker och bekväm familjebil.", img:"https://via.placeholder.com/400x200?text=Volvo+XC60", link:"https://www.volvocars.com/se/cars/xc60" },
     { name:"BMW X5", price:600000, fuel:"Bensin", year:2021, hp:300, seats:5, description:"Sportig SUV med hög prestanda.", img:"https://via.placeholder.com/400x200?text=BMW+X5", link:"https://www.bmw.se/sv/all-models/x-series/x5/2021/bmw-x5-inspire.html" },
@@ -148,7 +150,7 @@ const comparisonTable = document.getElementById('comparisonTable');
 const barContainer = document.getElementById('barContainer');
 let selectedCars = [];
 
-// ===== Rendera bilkort med flip-card =====
+// ===== Rendera bilkort =====
 function renderCars(list){
     carList.innerHTML="";
     list.forEach(car=>{
@@ -177,7 +179,7 @@ function renderCars(list){
 }
 renderCars(cars);
 
-// ===== Filterfunktion =====
+// ===== Filter =====
 function filterCars(){
     const searchValue = document.getElementById('searchInput').value.toLowerCase();
     const fuelValue = document.getElementById('fuelFilter').value;
@@ -191,16 +193,16 @@ function filterCars(){
     renderCars(filtered);
 }
 
-// ===== Jämförelsefunktion =====
+// ===== Lägg till jämförelse =====
 function addToCompare(carName){
     if(selectedCars.includes(carName)){ alert(carName+" är redan tillagd!"); return; }
     selectedCars.push(carName);
     comparisonPanel.style.display="block";
-    updateComparisonTable();
+    updateComparison();
 }
 
-// ===== Uppdatera jämförelsetabell och diagram =====
-function updateComparisonTable(){
+// ===== Uppdatera tabell och diagram =====
+function updateComparison(){
     const specs = [
         {label:"Pris", key:"price"},
         {label:"Bränsle", key:"fuel"},
@@ -222,15 +224,31 @@ function updateComparisonTable(){
         comparisonTable.innerHTML += row;
     });
 
-    // ===== Bar diagram =====
+    // ===== Bar diagram med Pris & Hästkrafter =====
     barContainer.innerHTML="";
     selectedCars.forEach(carName=>{
         const car = cars.find(c=>c.name===carName);
-        const bar = document.createElement('div');
-        bar.classList.add('bar');
-        bar.style.height=(car.hp/2)+"px"; // skala för graf
-        bar.title=`${car.name}: ${car.hp} hk`;
-        barContainer.appendChild(bar);
+        const group = document.createElement('div');
+        group.classList.add('bar-group');
+
+        const barPrice = document.createElement('div');
+        barPrice.classList.add('bar','bar-price');
+        barPrice.style.height = (car.price/15000)+"px"; // skala
+        barPrice.title = `${car.name} Pris: ${car.price.toLocaleString()} kr`;
+
+        const barHp = document.createElement('div');
+        barHp.classList.add('bar','bar-hp');
+        barHp.style.height = (car.hp*0.8)+"px"; // skala
+        barHp.title = `${car.name} Hästkrafter: ${car.hp} hk`;
+
+        const label = document.createElement('div');
+        label.classList.add('bar-label');
+        label.innerText = car.name;
+
+        group.appendChild(barPrice);
+        group.appendChild(barHp);
+        group.appendChild(label);
+        barContainer.appendChild(group);
     });
 }
 
@@ -243,5 +261,6 @@ function toggleMode(){ document.body.classList.toggle('light-mode'); }
 </script>
 </body>
 </html>
+
 
 
